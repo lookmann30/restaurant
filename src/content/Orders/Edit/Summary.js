@@ -24,7 +24,7 @@ import { fNumber } from 'src/utils/formatNumber'
 
 //Redux
 import { useDispatch, useSelector } from 'react-redux';
-import cartAction from 'redux/actions/cart.action'
+import editCartAction from 'redux/actions/editCart.action'
 
 //axios
 import axiosInstance from 'src/utils/axios';
@@ -38,23 +38,44 @@ import Dialog from 'src/components/Dialog'
 //next
 import { useRouter } from 'next/router';
 
-function OrderSummary() {
+
+function OrderSummary({orderId}) {
   const dispatch = useDispatch();
   const router = useRouter();
   const cookies = parseCookies();
-  const cartReducer = useSelector((state) => state.cartReducer);
+
+  const editCartReducer = useSelector((state) => state.editCartReducer);
+
 
   const [cart, setCart] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalItem, setTotalItem] = useState(0);
 
+  const [order, setOrder] = useState(null)
+
+  useEffect(() => {
+    async function GetOrder() {
+      await axiosInstance.get(`/orders/${orderId}`
+        , { "token": cookies.token })
+        .then(result => {
+          setOrder(result.data.result)
+          const currentOrder = result.data.result.orders_detail
+          dispatch(editCartAction.editCart(currentOrder));
+        })
+        .catch(function (error) {
+          console.log(error)
+        });
+    }
+    GetOrder();
+  }, [])
+
   useEffect(() => {
     async function Cart() {
-      if (cartReducer.result) {
-        setCart(cartReducer.result)
+      if (editCartReducer.result) {
+        setCart(editCartReducer.result)
         let countItem = 0
         let sumPrice = 0
-        cartReducer.result.map(val => {
+        editCartReducer.result.map(val => {
           countItem = countItem + parseInt(val.quantity)
           sumPrice = sumPrice + parseInt(val.price * val.quantity)
         })
@@ -63,11 +84,11 @@ function OrderSummary() {
       } else setCart(null)
     }
     Cart();
-  }, [cartReducer])
+  }, [editCartReducer])
 
   const deleteItem = (menuId) => {
     const newCart = cart.filter(val => val.menuId != menuId)
-    dispatch(cartAction.addToCart(newCart));
+    dispatch(editCartAction.editCart(newCart));
   }
 
   const increaseQty = (menuId) => {
@@ -83,7 +104,7 @@ function OrderSummary() {
         return val
       }
     })
-    dispatch(cartAction.addToCart(newCart));
+    dispatch(editCartAction.editCart(newCart));
   }
 
   const decreaseQty = (menuId) => {
@@ -109,19 +130,16 @@ function OrderSummary() {
       setTotalPrice(0)
       setTotalItem(0)
     }
-    dispatch(cartAction.addToCart(cartClearEmptyItem.length > 0 ? cartClearEmptyItem : null));
+    dispatch(editCartAction.editCart(cartClearEmptyItem.length > 0 ? cartClearEmptyItem : null));
   }
 
   const orderHandler = async () => {
     if(!cart) return false
     const order = {
       orders_detail: cart,
-      orders_status: "Success",
-      users_uuid: cookies._id,
-      orders_cooking_status: 'Pending',
       orders_total_price: totalPrice
     }
-    await axiosInstance.post('/orders/createOrder',
+    await axiosInstance.put(`/orders/updateOrder/${orderId}`,
       order
       , { "token": cookies.token })
       .then(result => {

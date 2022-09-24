@@ -10,22 +10,13 @@ import {
 import BaseLayout from 'src/layouts/BaseLayout';
 import MHidden from 'src/components/MHidden';
 
-import Link from 'src/components/Link';
 import Head from 'next/head';
 
-import Logo from 'src/components/LogoSign';
-import Hero from 'src/content/Overview/Hero';
 import LoginFrom from 'src/content/Authen/loginform'
 
-const HeaderWrapper = styled(Card)(
-  ({ theme }) => `
-  width: 100%;
-  display: flex;
-  align-items: center;
-  height: ${theme.spacing(10)};
-  margin-bottom: ${theme.spacing(10)};
-`
-);
+//nookies
+import nookies from 'nookies'
+
 
 const OverviewWrapper = styled(Box)(
   ({ theme }) => `
@@ -98,3 +89,17 @@ export default Overview;
 Overview.getLayout = function getLayout(page) {
   return <BaseLayout>{page}</BaseLayout>;
 };
+
+
+export async function getServerSideProps(context) {
+  const { req, res } = context
+  const cookies = nookies.get(context)
+  const token = cookies.token
+  if (token) {
+    res.writeHead(302, { Location: '/dashboards'});
+    res.end();
+  }
+  return {
+    props: {}
+  }
+}

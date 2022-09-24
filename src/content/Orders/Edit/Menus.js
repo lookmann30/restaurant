@@ -20,17 +20,17 @@ import _ from 'lodash';
 
 //Redux
 import { useDispatch, useSelector } from 'react-redux';
-import cartAction from 'redux/actions/cart.action'
+import editCartAction from 'redux/actions/editCart.action'
 
 import { fNumber } from 'src/utils/formatNumber'
 
-function Menus() {
+function Menus({ orderId }) {
   const cookies = parseCookies();
   const [listMenus, setListMenu] = useState([]);
   const [cartData, setCartData] = useState({});
   const dispatch = useDispatch();
 
-  const cartReducer = useSelector((state) => state.cartReducer);
+  const editCartReducer = useSelector((state) => state.editCartReducer);
 
   useEffect(() => {
     async function GetMenus() {
@@ -45,10 +45,10 @@ function Menus() {
     }
     GetMenus();
   }, [])
-
+  
   const addToCart = (detail) => {
-    if (!cartReducer.result) {
-      dispatch(cartAction.addToCart(
+    if (!editCartReducer.result) {
+      dispatch(editCartAction.editCart(
         [{
           menuId: detail.menus_id,
           menuName: detail.menus_nameth,
@@ -57,7 +57,7 @@ function Menus() {
         }]
       ));
     } else {
-      const currentCart = cartReducer.result
+      const currentCart = editCartReducer.result
       let newCart
       if (_.find(currentCart, { menuId: detail.menus_id })) {
         newCart = currentCart.map(val => {
@@ -80,7 +80,7 @@ function Menus() {
           quantity: 1
         })
       }
-      dispatch(cartAction.addToCart(newCart));
+      dispatch(editCartAction.editCart(newCart));
     }
   }
 
@@ -95,10 +95,10 @@ function Menus() {
           pb: 3
         }}
       >
-        <Typography variant="h3">Create Order</Typography>
-        <NextLink href="/order/transections" passHref>
-          <Button variant='outlined' >View Transections</Button>
-        </NextLink>
+        <Box display="flex" alignItems="flex-end">
+          <Typography variant="h3">Edit Order</Typography>
+          <Typography variant="h5" sx={{fontWeight : 300, ml:1, mb: 0.5}} >(Order id: {orderId})</Typography>
+        </Box>
       </Box>
       <Grid container spacing={3}>
         {

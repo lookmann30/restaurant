@@ -4,16 +4,20 @@ import SidebarLayout from 'src/layouts/SidebarLayout';
 
 import { Container, Grid } from '@mui/material';
 
-import Menus from 'src/content/Orders/Create/Menus';
-import Summary from 'src/content/Orders/Create/Summary'
+import Menus from 'src/content/Orders/Edit/Menus';
+import Summary from 'src/content/Orders/Edit/Summary'
+
+import { useRouter } from 'next/router'
 
 //nookies
 import nookies from 'nookies'
-function AddOrder() {
+function EditOrder() {
+  const router = useRouter()
+  const { id } = router.query
   return (
     <>
       <Head>
-        <title>Create order</title>
+        <title>Edit order</title>
       </Head>
       <Container maxWidth="lg" sx={{marginTop:5}}>
         <Grid
@@ -24,10 +28,10 @@ function AddOrder() {
           spacing={4}
         >
           <Grid item lg={8.5} xs={12}>
-            <Menus />
+            <Menus orderId={id}/>
           </Grid>
           <Grid item lg={3.5} xs={12}>
-            <Summary />
+            <Summary orderId={id}/>
           </Grid>
         </Grid>
       </Container>
@@ -35,9 +39,9 @@ function AddOrder() {
   );
 }
 
-AddOrder.getLayout = (page) => <SidebarLayout>{page}</SidebarLayout>;
+EditOrder.getLayout = (page) => <SidebarLayout>{page}</SidebarLayout>;
 
-export default AddOrder;
+export default EditOrder;
 
 export async function getServerSideProps(context) {
   const { req, res } = context

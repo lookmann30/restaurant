@@ -9,19 +9,19 @@ import {
   Divider,
   Hidden,
   lighten,
-  List,
-  ListItem,
-  ListItemText,
   Popover,
   Typography
 } from '@mui/material';
 
-import InboxTwoToneIcon from '@mui/icons-material/InboxTwoTone';
 import { styled } from '@mui/material/styles';
 import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
-import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
-import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
+
+//nookies
+import { parseCookies, setCookie, destroyCookie } from 'nookies'
+
+//route
+import { useRouter } from 'next/router';
 
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
@@ -52,18 +52,10 @@ const UserBoxLabel = styled(Typography)(
 `
 );
 
-const UserBoxDescription = styled(Typography)(
-  ({ theme }) => `
-        color: ${lighten(theme.palette.secondary.main, 0.5)}
-`
-);
 
 function HeaderUserbox() {
-  const user = {
-    name: 'Catherine Pike',
-    avatar: '/static/images/avatars/1.jpg',
-    jobtitle: 'Project Manager'
-  };
+  const router = useRouter();
+  const cookies = parseCookies();
 
   const ref = useRef(null);
   const [isOpen, setOpen] = useState(false);
@@ -76,12 +68,19 @@ function HeaderUserbox() {
     setOpen(false);
   };
 
+  const signOut = async () => {
+    await destroyCookie(null, 'token', { path: '/' })
+    await destroyCookie(null, 'user', { path: '/' })
+    await destroyCookie(null, '_id', { path: '/' })
+    router.push('/')
+  }
+
   return (
     <>
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
         <Hidden mdDown>
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
+            <UserBoxLabel variant="body1">{cookies.user}</UserBoxLabel>
           </UserBoxText>
         </Hidden>
         <Hidden smDown>
@@ -103,13 +102,13 @@ function HeaderUserbox() {
       >
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
+            <UserBoxLabel variant="body1">{cookies.user}</UserBoxLabel>
           </UserBoxText>
         </MenuUserBox>
         <Divider sx={{ mb: 0 }} />
         
         <Box sx={{ m: 1 }}>
-          <Button color="primary" fullWidth>
+          <Button color="primary" fullWidth onClick={signOut}>
             <LockOpenTwoToneIcon sx={{ mr: 1 }} />
             Sign out
           </Button>

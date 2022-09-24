@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 import {
   Button,
   Card,
@@ -11,6 +13,11 @@ import {
   CardActionArea,
   styled
 } from '@mui/material';
+
+import axiosInstance from 'src/utils/axios';
+import { parseCookies } from 'nookies'
+
+import { fNumber } from 'src/utils/formatNumber';
 
 const AvatarWrapper = styled(Avatar)(
   ({ theme }) => `
@@ -91,6 +98,12 @@ const CardTotalAction = styled(Card)(
   })
 );
 
+const CardQueueAction = styled(Card)(
+  ({ theme }) => ({
+    backgroundColor: "#EFDA26"
+  })
+);
+
 const CardTextContent = styled(Typography)(
   ({ theme }) => ({
     color: "#F9F9F9"
@@ -98,6 +111,47 @@ const CardTextContent = styled(Typography)(
 )
 
 function Overview() {
+  const cookies = parseCookies();
+
+  const [totalOrder, setTotalOrder] = useState(0)
+  const [completeOrder, setCompleteOrder] = useState(0)
+  const [cancelOrder, setCancelOrder] = useState(0)
+  const [totalPrice, setTotalPrice] = useState(0)
+  const [inQueue, setInQueue] = useState(0)
+
+  useEffect(() => {
+    async function GetOrder() {
+      await axiosInstance.get('/orders'
+        , { "token": cookies.token })
+        .then(result => {
+          const orders = result.data.result
+          setTotalOrder(orders.length)
+          
+          const complete = orders.filter(val => val.orders_status == "Success" && val.orders_cooking_status == "Accept")
+          setCompleteOrder(complete.length)
+
+          let priceAll = 0
+          orders.map(val => {
+            if(val => val.orders_status == "Success" && val.orders_cooking_status == "Accept"){
+              priceAll += parseInt(val.orders_total_price)
+            }
+          })
+          setTotalPrice(priceAll)
+
+          const cancel = orders.filter(val => val.orders_status == "Cancel")
+          setCancelOrder(cancel.length)
+
+          const queue = orders.filter(val => val.orders_status == "Success" && val.orders_cooking_status == "Pending")
+          setInQueue(queue.length)
+        
+        })
+        .catch(function (error) {
+          console.log(error)
+        });
+    }
+    GetOrder();
+  }, [])
+  
   return (
     <>
       <Box
@@ -112,7 +166,7 @@ function Overview() {
        
       </Box>
       <Grid container spacing={2}>
-        <Grid xs={12} sm={6} md={4} item display="flex">
+        <Grid xs={12} sm={6} md={3} item display="flex">
           <CardTotalAction
             sx={{
               px: 1,
@@ -136,14 +190,14 @@ function Overview() {
                 }}
               >
                 <CardTextContent variant="h3" gutterBottom noWrap>
-                  10 Orders
+                  {totalOrder} Orders
                 </CardTextContent>
               
               </Box>
             </CardContent>
           </CardTotalAction>
         </Grid>
-        <Grid xs={12} sm={6} md={4} item display="flex">
+        <Grid xs={12} sm={6} md={3} item display="flex">
           <CardSuccessAction
             sx={{
               px: 1,
@@ -167,16 +221,46 @@ function Overview() {
                 }}
               >
                 <CardTextContent variant="h3" gutterBottom noWrap>
-                  10 Orders
+                  {fNumber(completeOrder)} Orders
                 </CardTextContent>
                 <CardTextContent variant="subtitle2" noWrap>
-                  2000 Bath
+                  {fNumber(totalPrice)} Bath
                 </CardTextContent>
               </Box>
             </CardContent>
           </CardSuccessAction>
         </Grid>
-        <Grid xs={12} sm={6} md={4} item display="flex">
+        <Grid xs={12} sm={6} md={3} item display="flex">
+          <CardQueueAction
+            sx={{
+              px: 1,
+              width: "100%"
+            }}
+          >
+            <CardContent>
+              <AvatarWrapper>
+                <img
+                  alt="accept"
+                  src="/static/images/placeholders/logo/queue.png"
+                />
+              </AvatarWrapper>
+              <CardTextContent variant="h5" noWrap>
+                In Queue orders
+              </CardTextContent>
+             
+              <Box
+                sx={{
+                  pt: 3
+                }}
+              >
+                <CardTextContent variant="h3" gutterBottom noWrap>
+                  {fNumber(inQueue)} Orders
+                </CardTextContent>
+              </Box>
+            </CardContent>
+          </CardQueueAction>
+        </Grid>
+        <Grid xs={12} sm={6} md={3} item display="flex">
           <CardCancelAction
             sx={{
               px: 1,
@@ -200,7 +284,7 @@ function Overview() {
                 }}
               >
                 <CardTextContent variant="h3" gutterBottom noWrap>
-                  10 Orders
+                  {fNumber(cancelOrder)} Orders
                 </CardTextContent>
               </Box>
             </CardContent>

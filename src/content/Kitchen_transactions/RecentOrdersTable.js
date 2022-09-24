@@ -3,6 +3,8 @@ import { format } from 'date-fns';
 import numeral from 'numeral';
 import PropTypes from 'prop-types';
 import {
+  useTheme,
+  styled,
   Tooltip,
   Divider,
   Box,
@@ -20,10 +22,10 @@ import {
   Select,
   MenuItem,
   Typography,
-  useTheme,
   CardHeader,
   List,
   ListItem,
+  Button
 } from '@mui/material';
 
 import Label from 'src/components/Label';
@@ -42,15 +44,22 @@ import Dialog from 'src/components/Dialog'
 //next
 import { useRouter } from 'next/router'
 
+
+
+const DisabledButton = styled(Button)(({ theme }) => ({
+   '&.Mui-disabled' : {
+    backgroundColor: "#D3D3D3",
+    color: "#898989"
+    }
+}))
+
+
+
 const getStatusLabel = (status) => {
   const map = {
     cancel: {
       text: 'Cancel',
       color: 'error'
-    },
-    success: {
-      text: 'Success',
-      color: 'success'
     },
     accept: {
       text: 'Accept',
@@ -71,7 +80,7 @@ const applyFilters = (order, filters) => {
   return order.filter((order) => {
     let matches = true;
 
-    if (filters.status && order.status.toLowerCase() !== filters.status) {
+    if (filters.status && order.cookingStatus.toLowerCase() !== filters.status) {
       matches = false;
     }
 
@@ -83,7 +92,7 @@ const applyPagination = (order, page, limit) => {
   return order.slice(page * limit, page * limit + limit);
 };
 
-const RecentOrdersTable = ({ orders, deleteOrder }) => {
+const RecentOrdersTable = ({ orders, acceptOrder }) => {
   const cookies = parseCookies();
   const router = useRouter()
   const [page, setPage] = useState(0);
@@ -98,13 +107,16 @@ const RecentOrdersTable = ({ orders, deleteOrder }) => {
       name: 'All'
     },
     {
-      id: 'success',
-      name: 'Success'
+      id: 'accept',
+      name: 'Accepted'
     },
-    
     {
-      id: 'cancel',
-      name: 'Canceled'
+      id: 'pending',
+      name: 'Pending'
+    },
+    {
+      id: 'reject',
+      name: 'Rejected'
     }
   ];
 
@@ -172,22 +184,6 @@ const RecentOrdersTable = ({ orders, deleteOrder }) => {
     orderDetail: PropTypes.array.isRequired
   };
 
-  const [open, setOpen] = useState(false);
-  const [deleteId, setDeleteId] = useState(null)
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (status,value) => {
-    if(status) deleteOrder(value)
-    setOpen(false);
-  };
-
-  const editHandler = (orderId) => {
-    router.push(`/order/edit/${orderId}`)
-  }
-
-
   return (
     <Card>
       <CardHeader
@@ -219,9 +215,6 @@ const RecentOrdersTable = ({ orders, deleteOrder }) => {
             <TableRow>
               <TableCell>Order ID</TableCell>
               <TableCell>Order Detail</TableCell>
-              <TableCell align="right">Total Price</TableCell>
-              <TableCell align="right">Create By</TableCell>
-              <TableCell align="right">Status</TableCell>
               <TableCell align="right">Cooking Status</TableCell>
               <TableCell align="right">Create Date</TableCell>
               <TableCell align="right">Actions</TableCell>
@@ -253,41 +246,6 @@ const RecentOrdersTable = ({ orders, deleteOrder }) => {
                       gutterBottom
                       noWrap
                     >
-                      {fNumber(val.totalPrice)}
-                    </Typography>
-
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {val.createBy}
-                    </Typography>
-
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {getStatusLabel(val.status.toLowerCase())}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
                       {getStatusLabel(val.cookingStatus.toLowerCase())}
                     </Typography>
                   </TableCell>
@@ -296,40 +254,15 @@ const RecentOrdersTable = ({ orders, deleteOrder }) => {
                   </TableCell>
                   <TableCell align="right">
                     {
-                      val.cookingStatus === "Pending" ? 
-                      <>
-                      <Tooltip title="Edit Order" arrow>
-                      <IconButton
-                        sx={{
-                          '&:hover': {
-                            background: theme.colors.primary.lighter
-                          },
-                          color: theme.palette.primary.main
-                        }}
-                        color="inherit"
-                        size="small"
-                        onClick={() => {editHandler(val.id)}}
-                      >
-                        <EditTwoToneIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Cancel Order" arrow>
-                      <IconButton
-                        sx={{
-                          '&:hover': { background: theme.colors.error.lighter },
-                          color: theme.palette.error.main
-                        }}
-                        color="inherit"
-                        size="small"
-                        onClick={()=>{
-                          setDeleteId(val.id)
-                          handleClickOpen()
-                        }}
-                      >
-                        <CancelTwoToneIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    </> : null}
+                      val.cookingStatus === "Pending" ?
+                    <Button variant="contained" color="primary" onClick={()=> acceptOrder(val.id)}>Accept</Button> :
+                    <DisabledButton 
+                      disabled 
+                      variant="contained" 
+                      color="success"
+                      >Accept</DisabledButton>
+
+                    }
                   </TableCell>
                 </TableRow>
               );
@@ -348,20 +281,13 @@ const RecentOrdersTable = ({ orders, deleteOrder }) => {
           rowsPerPageOptions={[5, 10, 25, 30]}
         />
       </Box>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        type="delete"
-        confirm={true}
-        dataValue={deleteId}
-      />
     </Card>
   );
 };
 
 RecentOrdersTable.propTypes = {
   orders: PropTypes.array.isRequired,
-  deleteOrder: PropTypes.func.isRequired
+  acceptOrder: PropTypes.func.isRequired
 };
 
 RecentOrdersTable.defaultProps = {

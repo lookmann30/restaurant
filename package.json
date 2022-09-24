@@ -1,11 +1,10 @@
 {
-  "name": "tokyo-free-white-nextjs-admin-dashboard-js",
+  "name": "restaurant_management",
   "version": "1.0.0",
-  "title": "Tokyo Free White NextJS Javascript Admin Dashboard",
-  "description": "High performance React template built with lots of powerful MUI (Material-UI) components across multiple product niches for fast & perfect apps development processes",
+  "title": "Restaurant Management",
+  "description": "",
   "author": {
-    "name": "BloomUI.com",
-    "url": "https://bloomui.com"
+    "name": "Nantarat Kornsri"
   },
   "private": false,
   "dependencies": {
@@ -21,18 +20,29 @@
     "@mui/material": "5.8.2",
     "@mui/styles": "5.8.0",
     "apexcharts": "3.35.3",
+    "axios": "^0.27.2",
     "clsx": "1.1.1",
     "context-api": "0.0.2",
     "date-fns": "2.28.0",
+    "dayjs": "^1.11.5",
+    "dotenv": "^16.0.2",
     "formik": "^2.2.9",
+    "lodash": "^4.17.21",
     "next": "12.1.6",
     "next-images": "1.8.4",
+    "next-redux-wrapper": "^8.0.0",
+    "nookies": "^2.5.2",
     "nprogress": "0.2.0",
-    "numeral": "2.0.6",
+    "numeral": "^2.0.6",
     "react": "17.0.2",
     "react-apexcharts": "1.4.0",
     "react-custom-scrollbars-2": "4.4.0",
     "react-dom": "17.0.2",
+    "react-redux": "^8.0.4",
+    "redux": "^4.2.0",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-saga": "^1.2.1",
+    "redux-thunk": "^2.4.1",
     "yup": "^0.32.11"
   },
   "scripts": {

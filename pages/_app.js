@@ -9,6 +9,7 @@ import createEmotionCache from 'src/createEmotionCache';
 import { SidebarProvider } from 'src/contexts/SidebarContext';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { wrapper } from '../redux';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -41,4 +42,4 @@ function RestaurantApp(props) {
   );
 }
 
-export default RestaurantApp;
+export default wrapper.withRedux(RestaurantApp);

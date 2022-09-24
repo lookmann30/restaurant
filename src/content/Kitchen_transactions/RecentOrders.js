@@ -11,6 +11,7 @@ function RecentOrders() {
   const cookies = parseCookies();
   const router = useRouter();
   const [orders, setOrder] = useState([])
+  const [updated, setUpdated] = useState(false)
 
   useEffect(() => {
     async function GetOrder() {
@@ -18,17 +19,16 @@ function RecentOrders() {
         , { "token": cookies.token })
         .then(result => {
           const order = result.data.result;
-          const initialOrder =  order.map(val => {
+          const removeCancel = order.filter(val => val.orders_status != "Cancel")
+          const initialOrder =  removeCancel.map(val => {
             return {
               id: val.orders_id,
               detail: val.orders_detail,
-              createBy: val.user.users_username,
-              status: val.orders_status,
-              totalPrice: val.orders_total_price,
               cookingStatus : val.orders_cooking_status,
               cdate: val.orders_cdate
             }
           })
+          setUpdated(false)
           setOrder(initialOrder)
         })
         .catch(function (error) {
@@ -36,15 +36,15 @@ function RecentOrders() {
         });
     }
     GetOrder();
-  }, [])
+  }, [updated])
 
-  const deleteOrder = async (orderId) => {
+  const acceptOrder = async (orderId) => {
     await axiosInstance.put(`/orders/updateOrder/${orderId}`
     ,
-    { orders_status : "Cancel"}
+    { orders_cooking_status : "Accept"}
     , { "token": cookies.token })
     .then(result => {
-      router.reload()
+      setUpdated(true)
     })
     .catch(function (error) {
       console.log(error)
@@ -53,7 +53,7 @@ function RecentOrders() {
 
   return (
     <Card>
-        <RecentOrdersTable orders={orders} deleteOrder={deleteOrder}/>
+        <RecentOrdersTable orders={orders} acceptOrder={acceptOrder}/>
     </Card>
   );
 }
