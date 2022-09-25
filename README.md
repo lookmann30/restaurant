@@ -51,7 +51,7 @@ Second, run server:
 ```bash
 node server.js
 ```
-or use nodemon
+or use [nodemon](https://github.com/remy/nodemon)
 ```bash
 nodemon server.js
 ```
@@ -59,4 +59,13 @@ nodemon server.js
 Server is running on port 3001
 
 ### Database
-> Don't forget install postgresql. [Postgresql Download](https://www.postgresql.org/download/)
+> Don't forget install [Postgresql](https://www.postgresql.org/download/)
+
+<ol>
+    <li>Start pgAdmin 4 client</li>
+    <li>Open menu tools and choose Import/Export Servers</li>
+    <li>Import/Export : select file db.json and click next</li>
+    <li>Database Servers : select Servers include PostgresSQL14 click next</li>
+    <li>Summary : click finnish</li>
+    <li>Connect to server with password "P@ssw0rd"</li>
+</ol>
