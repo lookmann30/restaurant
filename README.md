@@ -3,17 +3,60 @@
     Requirement
 </h2>
 <ol>
-    <li>Make sure you have the latest stable versions for Node.js and NPM installed</li>
-  
+    <li>Make sure you have the latest stable versions for Node.js , YARN & NPM installed</li>
+    <li>Postgesql v14</li>
+    
 </ol>
 
 ---
 
 <h2>
-    Technical Support
+    Installation
 </h2>
 <p>
-    You can open a support ticket by sending an email here: <a href="mailto:support@bloomui.freshdesk.com" title="Open Support Ticket">
-        support@bloomui.freshdesk.com
-    </a>
+    <li>Clone repository: <code>git clone https://github.com/lookmann30/restaurant.git</code></li>
 </p>
+
+### Frontend
+
+First, install dependency:
+
+```bash
+npm install
+# or
+yarn add
+```
+
+Second, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+
+### Backend
+
+First, install dependency:
+
+```bash
+npm install
+```
+
+Second, run server:
+
+```bash
+node server.js
+```
+or use nodemon
+```bash
+nodemon server.js
+```
+
+Server is running on port 3001
+
+### Database
+> Don't forget install postgresql. [Postgresql Download](https://www.postgresql.org/download/)
