@@ -1,6 +1,6 @@
 
 <h2>
-    Quick Start
+    Requirement
 </h2>
 <ol>
     <li>Make sure you have the latest stable versions for Node.js and NPM installed</li>
