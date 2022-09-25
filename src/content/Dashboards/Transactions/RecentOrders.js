@@ -7,6 +7,9 @@ import { useRouter } from 'next/router'
 import axiosInstance from 'src/utils/axios';
 import { parseCookies } from 'nookies'
 
+//lodash
+import _ from 'lodash';
+
 function RecentOrders() {
   const cookies = parseCookies();
   const router = useRouter();
@@ -29,7 +32,7 @@ function RecentOrders() {
               cdate: val.orders_cdate
             }
           })
-          setOrder(initialOrder)
+          setOrder(_.reverse(initialOrder))
         })
         .catch(function (error) {
           console.log(error)
@@ -41,7 +44,10 @@ function RecentOrders() {
   const deleteOrder = async (orderId) => {
     await axiosInstance.put(`/orders/updateOrder/${orderId}`
     ,
-    { orders_status : "Cancel"}
+    { 
+      orders_status : "Cancel",
+      orders_cooking_status : "Cancel"
+    }
     , { "token": cookies.token })
     .then(result => {
       router.reload()

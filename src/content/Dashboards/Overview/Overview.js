@@ -132,7 +132,7 @@ function Overview() {
 
           let priceAll = 0
           orders.map(val => {
-            if(val => val.orders_status == "Success" && val.orders_cooking_status == "Accept"){
+            if(val.orders_status === "Success" && val.orders_cooking_status === "Accept"){
               priceAll += parseInt(val.orders_total_price)
             }
           })

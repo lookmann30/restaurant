@@ -134,7 +134,23 @@ function OrderSummary({orderId}) {
   }
 
   const orderHandler = async () => {
-    if(!cart) return false
+    if(!cart) {
+      const order = {
+        orders_status: "Cancel",
+        orders_cooking_status: "Cancel",
+      }
+      await axiosInstance.put(`/orders/updateOrder/${orderId}`,
+        order
+        , { "token": cookies.token })
+        .then(result => {
+          handleClickOpen()
+          router.push('/dashboards')
+          return true
+        })
+        .catch(function (error) {
+          console.log(error)
+        });
+    }
     const order = {
       orders_detail: cart,
       orders_total_price: totalPrice

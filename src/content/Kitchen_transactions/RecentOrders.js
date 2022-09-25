@@ -7,6 +7,10 @@ import { useRouter } from 'next/router'
 import axiosInstance from 'src/utils/axios';
 import { parseCookies } from 'nookies'
 
+//lodash
+import _ from 'lodash';
+
+
 function RecentOrders() {
   const cookies = parseCookies();
   const router = useRouter();
@@ -29,7 +33,7 @@ function RecentOrders() {
             }
           })
           setUpdated(false)
-          setOrder(initialOrder)
+          setOrder(_.reverse(initialOrder))
         })
         .catch(function (error) {
           console.log(error)

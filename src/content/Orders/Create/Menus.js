@@ -96,9 +96,9 @@ function Menus() {
         }}
       >
         <Typography variant="h3">Create Order</Typography>
-        <NextLink href="/order/transections" passHref>
+        {/* <NextLink href="/order/transections" passHref>
           <Button variant='outlined' >View Transections</Button>
-        </NextLink>
+        </NextLink> */}
       </Box>
       <Grid container spacing={3}>
         {

@@ -296,7 +296,7 @@ const RecentOrdersTable = ({ orders, deleteOrder }) => {
                   </TableCell>
                   <TableCell align="right">
                     {
-                      val.cookingStatus === "Pending" ? 
+                      val.cookingStatus === "Pending" && val.status !== "Cancel" ? 
                       <>
                       <Tooltip title="Edit Order" arrow>
                       <IconButton
