@@ -123,7 +123,7 @@ export default function LoginForm() {
             helperText={touched.password && errors.password}
           />
           <Typography variant="body14pxW700" color="text.disabled" sx={{ paddingBottom: 3 }}>
-            Usename : demo / password : demo1234
+            Usename : admin / password : admin123
           </Typography>
         </Stack>
 
